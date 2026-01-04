@@ -39,9 +39,8 @@ const ProgressBar = ({ current, goal }) => {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    // Added inline styles to prevent "huge" SVG if CSS fails
     <div 
-      className="relative flex items-center justify-center w-64 h-64 mx-auto my-6 transition-all duration-500 transform hover:scale-105"
+      className="relative flex items-center justify-center mx-auto my-6 transition-all duration-500 transform hover:scale-105"
       style={{ width: '250px', height: '250px', margin: '24px auto', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
@@ -64,7 +63,7 @@ const ProgressBar = ({ current, goal }) => {
 };
 
 const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
-  <div className="relative group">
+  <div className="relative group" style={{ position: 'relative', width: '100%' }}>
     <button
       onClick={() => onClick(amount)}
       className="w-full flex flex-col items-center justify-center p-4 bg-white border-2 border-slate-100 rounded-3xl shadow-sm hover:shadow-md hover:border-sky-200 hover:bg-sky-50 transition-all active:scale-95"
@@ -78,7 +77,8 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
         backgroundColor: 'white', 
         border: '2px solid #f1f5f9', 
         borderRadius: '1.5rem',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        minHeight: '100px' // Ensure uniform height
       }}
     >
       <div className="mb-2 p-2 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors" style={{ marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#e0f2fe', borderRadius: '9999px' }}>
@@ -90,7 +90,19 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(amount); }}
         className="absolute -top-2 -right-2 bg-red-100 text-red-500 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
-        style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: '#fee2e2', color: '#ef4444', borderRadius: '9999px', padding: '4px', border: 'none', cursor: 'pointer' }}
+        style={{ 
+          position: 'absolute', 
+          top: '-6px', 
+          right: '-6px', 
+          backgroundColor: '#fee2e2', 
+          color: '#ef4444', 
+          borderRadius: '9999px', 
+          padding: '6px', 
+          border: '2px solid white', // Added white border to separate overlap
+          cursor: 'pointer',
+          zIndex: 10,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}
       >
         <X size={14} />
       </button>
@@ -102,15 +114,11 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
 export default function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
-  // Load data from LocalStorage with error handling
   const [dailyData, setDailyData] = useState(() => {
     try {
       const saved = localStorage.getItem('hydroflow_data');
       return saved ? JSON.parse(saved) : {};
-    } catch (e) {
-      console.error("Could not load data", e);
-      return {};
-    }
+    } catch (e) { return {}; }
   });
   
   const [customAmount, setCustomAmount] = useState('');
@@ -119,18 +127,14 @@ export default function App() {
   const [dailyGoal, setDailyGoal] = useState(() => {
     try {
       return parseInt(localStorage.getItem('hydroflow_goal')) || 2500;
-    } catch (e) {
-      return 2500;
-    }
+    } catch (e) { return 2500; }
   });
 
   const [savedGlasses, setSavedGlasses] = useState(() => {
     try {
       const saved = localStorage.getItem('hydroflow_glasses');
       return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
+    } catch (e) { return []; }
   });
 
   const [isEditingGoal, setIsEditingGoal] = useState(false);
@@ -140,21 +144,10 @@ export default function App() {
   const currentData = dailyData[currentDocId] || { total: 0, entries: [] };
   const defaultGlasses = [100, 400, 500];
 
-  // Save to LocalStorage effects
-  useEffect(() => {
-    localStorage.setItem('hydroflow_data', JSON.stringify(dailyData));
-  }, [dailyData]);
+  useEffect(() => { localStorage.setItem('hydroflow_data', JSON.stringify(dailyData)); }, [dailyData]);
+  useEffect(() => { localStorage.setItem('hydroflow_goal', dailyGoal.toString()); }, [dailyGoal]);
+  useEffect(() => { localStorage.setItem('hydroflow_glasses', JSON.stringify(savedGlasses)); }, [savedGlasses]);
 
-  useEffect(() => {
-    localStorage.setItem('hydroflow_goal', dailyGoal.toString());
-  }, [dailyGoal]);
-
-  useEffect(() => {
-    localStorage.setItem('hydroflow_glasses', JSON.stringify(savedGlasses));
-  }, [savedGlasses]);
-
-
-  // Handlers
   const handleSaveGoal = () => {
     const newGoal = parseInt(tempGoal);
     if (!isNaN(newGoal) && newGoal > 0) {
@@ -211,12 +204,10 @@ export default function App() {
   const allGlasses = [...defaultGlasses, ...savedGlasses].sort((a,b) => a - b);
 
   return (
-    // Added fallback inline styles to main container
     <div 
       className="min-h-screen bg-sky-50/50 p-4 md:p-8 font-sans text-slate-800"
       style={{ minHeight: '100vh', backgroundColor: '#f0f9ff', padding: '1rem', fontFamily: 'system-ui, sans-serif' }}
     >
-      {/* Centered Container with Max Width to prevent "Huge" look */}
       <div 
         className="max-w-md mx-auto space-y-6"
         style={{ maxWidth: '450px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
@@ -297,28 +288,28 @@ export default function App() {
           )}
         </div>
 
-        {/* Controls */}
+        {/* Controls - INCREASED GAP TO 1rem (16px) */}
         <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div className="grid grid-cols-3 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+          <div className="grid grid-cols-3 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {allGlasses.map((amount) => (
               <QuickAddButton key={amount} amount={amount} onClick={handleAddWater} icon={GlassWater} onDelete={savedGlasses.includes(amount) ? handleDeletePreset : undefined} />
             ))}
           </div>
-          <form onSubmit={handleCustomSubmit} className="flex gap-3" style={{ display: 'flex', gap: '0.75rem' }}>
-            <div className="relative flex-1" style={{ position: 'relative', flex: 1 }}>
-              <input type="number" placeholder="Custom amount (ml)" value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} 
+          <form onSubmit={handleCustomSubmit} className="flex gap-3" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'nowrap' }}>
+            <div className="relative flex-1" style={{ position: 'relative', flex: 1, minWidth: '100px' }}>
+              <input type="number" placeholder="Custom" value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} 
                 className="w-full pl-4 pr-12 py-4 bg-white border-2 border-slate-100 rounded-3xl focus:outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-100 transition-all font-semibold text-slate-700 placeholder:text-slate-300 shadow-sm" 
                 style={{ width: '100%', padding: '1rem', paddingRight: '3rem', borderRadius: '1.5rem', border: '2px solid #f1f5f9', outline: 'none' }}
               />
-              <span className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium" style={{ position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '0.875rem' }}>ml</span>
+              <span className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '0.875rem' }}>ml</span>
             </div>
             <button type="submit" disabled={!customAmount} 
               className="bg-slate-800 text-white p-4 rounded-3xl hover:bg-slate-700 active:scale-95 transition-all shadow-lg shadow-slate-200 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center min-w-[3.5rem]"
-              style={{ backgroundColor: '#1e293b', color: 'white', padding: '1rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer', minWidth: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ backgroundColor: '#1e293b', color: 'white', padding: '1rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <Plus size={24} />
             </button>
-            {customAmount && <button type="button" onClick={handleSavePreset} className="bg-white border-2 border-sky-200 text-sky-600 p-4 rounded-3xl hover:bg-sky-50 active:scale-95 transition-all shadow-sm flex items-center justify-center min-w-[3.5rem]" style={{ backgroundColor: 'white', border: '2px solid #bae6fd', color: '#0284c7', padding: '1rem', borderRadius: '1.5rem', cursor: 'pointer', minWidth: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Save size={24} /></button>}
+            {customAmount && <button type="button" onClick={handleSavePreset} className="bg-white border-2 border-sky-200 text-sky-600 p-4 rounded-3xl hover:bg-sky-50 active:scale-95 transition-all shadow-sm flex items-center justify-center min-w-[3.5rem]" style={{ backgroundColor: 'white', border: '2px solid #bae6fd', color: '#0284c7', padding: '1rem', borderRadius: '1.5rem', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Save size={24} /></button>}
           </form>
         </div>
 
