@@ -41,7 +41,7 @@ const ProgressBar = ({ current, goal }) => {
   return (
     <div 
       className="relative flex items-center justify-center mx-auto my-6 transition-all duration-500 transform hover:scale-105"
-      style={{ width: '250px', height: '250px', margin: '24px auto', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={{ width: '250px', height: '250px', margin: '24px auto', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
     >
       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
         <circle cx="100" cy="100" r={radius} stroke="#E0F2FE" strokeWidth="18" fill="none" strokeLinecap="round" />
@@ -63,23 +63,25 @@ const ProgressBar = ({ current, goal }) => {
 };
 
 const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
-  <div className="relative group" style={{ position: 'relative', width: '100%' }}>
+  <div className="relative group" style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
     <button
       onClick={() => onClick(amount)}
       className="w-full flex flex-col items-center justify-center p-4 bg-white border-2 border-slate-100 rounded-3xl shadow-sm hover:shadow-md hover:border-sky-200 hover:bg-sky-50 transition-all active:scale-95"
       style={{ 
         width: '100%', 
+        boxSizing: 'border-box', // CRITICAL FIX: Include padding in width calculation
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center', 
         padding: '1rem', 
+        paddingTop: '1.5rem', 
         backgroundColor: 'white', 
         border: '2px solid #f1f5f9', 
         borderRadius: '1.5rem',
         cursor: 'pointer',
-        minHeight: '100px',
-        position: 'relative' // Important for internal positioning
+        minHeight: '120px', 
+        position: 'relative'
       }}
     >
       <div className="mb-2 p-2 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors" style={{ marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#e0f2fe', borderRadius: '9999px' }}>
@@ -90,19 +92,20 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
     {onDelete && (
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(amount); }}
-        className="absolute bg-red-100 text-red-500 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
-        // FIX: Moved top/right to positive values to keep button INSIDE the card
+        className="absolute bg-red-50 text-red-500 rounded-full p-1 shadow-sm opacity-100 transition-opacity hover:bg-red-100"
         style={{ 
           position: 'absolute', 
           top: '8px', 
           right: '8px', 
-          backgroundColor: '#fee2e2', 
+          backgroundColor: '#fef2f2', 
           color: '#ef4444', 
           borderRadius: '9999px', 
           padding: '6px', 
-          border: 'none',
+          border: '2px solid white', 
           cursor: 'pointer',
-          zIndex: 20
+          zIndex: 20,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+          boxSizing: 'border-box'
         }}
       >
         <X size={14} />
@@ -207,15 +210,15 @@ export default function App() {
   return (
     <div 
       className="min-h-screen bg-sky-50/50 p-4 md:p-8 font-sans text-slate-800"
-      style={{ minHeight: '100vh', backgroundColor: '#f0f9ff', padding: '1rem', fontFamily: 'system-ui, sans-serif' }}
+      style={{ minHeight: '100vh', backgroundColor: '#f0f9ff', padding: '1rem', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box' }}
     >
       <div 
         className="max-w-md mx-auto space-y-6"
-        style={{ maxWidth: '450px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+        style={{ maxWidth: '450px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxSizing: 'border-box' }}
       >
         
         {/* Header */}
-        <header className="flex items-center justify-between px-2" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
+        <header className="flex items-center justify-between px-2" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: '0.5rem', paddingRight: '0.5rem', boxSizing: 'border-box' }}>
           <div>
             <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2" style={{ fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span className="bg-sky-500 text-white p-2 rounded-xl" style={{ backgroundColor: '#0ea5e9', color: 'white', padding: '0.5rem', borderRadius: '0.75rem' }}><Droplets size={20} fill="currentColor" /></span>
@@ -243,7 +246,7 @@ export default function App() {
         {/* Date Navigator */}
         <div 
           className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex items-center justify-between"
-          style={{ backgroundColor: 'white', borderRadius: '1.5rem', padding: '1rem', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}
+          style={{ backgroundColor: 'white', borderRadius: '1.5rem', padding: '1rem', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)', boxSizing: 'border-box' }}
         >
           <button onClick={() => changeDate(-1)} className="p-2 hover:bg-slate-50 rounded-full text-slate-400 hover:text-sky-500 transition-colors" style={{ padding: '0.5rem', borderRadius: '9999px', border: 'none', background: 'transparent', cursor: 'pointer' }}><ChevronLeft size={24} /></button>
           <div className="text-center">
@@ -256,7 +259,7 @@ export default function App() {
         {/* Main Display */}
         <div 
           className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-sky-100/50 relative overflow-hidden"
-          style={{ backgroundColor: 'white', borderRadius: '2.5rem', padding: '1.5rem', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(224, 242, 254, 0.5)' }}
+          style={{ backgroundColor: 'white', borderRadius: '2.5rem', padding: '1.5rem', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(224, 242, 254, 0.5)', boxSizing: 'border-box' }}
         >
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-sky-300 via-blue-400 to-sky-300 opacity-50" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '8px', background: 'linear-gradient(to right, #7dd3fc, #60a5fa, #7dd3fc)', opacity: 0.5 }}></div>
           {showHistory ? (
@@ -290,34 +293,34 @@ export default function App() {
         </div>
 
         {/* Controls - IMPROVED SPACING & POSITIONING */}
-        <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div className="grid grid-cols-3 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+        <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', boxSizing: 'border-box' }}>
+          <div className="grid grid-cols-3 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', boxSizing: 'border-box' }}>
             {allGlasses.map((amount) => (
               <QuickAddButton key={amount} amount={amount} onClick={handleAddWater} icon={GlassWater} onDelete={savedGlasses.includes(amount) ? handleDeletePreset : undefined} />
             ))}
           </div>
-          <form onSubmit={handleCustomSubmit} className="flex gap-3" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'nowrap' }}>
-            <div className="relative flex-1" style={{ position: 'relative', flex: 1, minWidth: '100px' }}>
+          <form onSubmit={handleCustomSubmit} className="flex gap-3" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'nowrap', boxSizing: 'border-box' }}>
+            <div className="relative flex-1" style={{ position: 'relative', flex: 1, minWidth: '100px', boxSizing: 'border-box' }}>
               <input type="number" placeholder="Custom" value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} 
                 className="w-full pl-4 pr-12 py-4 bg-white border-2 border-slate-100 rounded-3xl focus:outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-100 transition-all font-semibold text-slate-700 placeholder:text-slate-300 shadow-sm" 
-                style={{ width: '100%', padding: '1rem', paddingRight: '3rem', borderRadius: '1.5rem', border: '2px solid #f1f5f9', outline: 'none' }}
+                style={{ width: '100%', padding: '1rem', paddingRight: '3rem', borderRadius: '1.5rem', border: '2px solid #f1f5f9', outline: 'none', boxSizing: 'border-box' }}
               />
               <span className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '0.875rem' }}>ml</span>
             </div>
             <button type="submit" disabled={!customAmount} 
               className="bg-slate-800 text-white p-4 rounded-3xl hover:bg-slate-700 active:scale-95 transition-all shadow-lg shadow-slate-200 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center min-w-[3.5rem]"
-              style={{ backgroundColor: '#1e293b', color: 'white', padding: '1rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ backgroundColor: '#1e293b', color: 'white', padding: '1rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
             >
               <Plus size={24} />
             </button>
-            {customAmount && <button type="button" onClick={handleSavePreset} className="bg-white border-2 border-sky-200 text-sky-600 p-4 rounded-3xl hover:bg-sky-50 active:scale-95 transition-all shadow-sm flex items-center justify-center min-w-[3.5rem]" style={{ backgroundColor: 'white', border: '2px solid #bae6fd', color: '#0284c7', padding: '1rem', borderRadius: '1.5rem', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Save size={24} /></button>}
+            {customAmount && <button type="button" onClick={handleSavePreset} className="bg-white border-2 border-sky-200 text-sky-600 p-4 rounded-3xl hover:bg-sky-50 active:scale-95 transition-all shadow-sm flex items-center justify-center min-w-[3.5rem]" style={{ backgroundColor: 'white', border: '2px solid #bae6fd', color: '#0284c7', padding: '1rem', borderRadius: '1.5rem', cursor: 'pointer', minWidth: '3.5rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}><Save size={24} /></button>}
           </form>
         </div>
 
         {/* Calendar */}
         <div 
           className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100"
-          style={{ backgroundColor: 'white', borderRadius: '1.5rem', padding: '1.5rem', border: '1px solid #f1f5f9' }}
+          style={{ backgroundColor: 'white', borderRadius: '1.5rem', padding: '1.5rem', border: '1px solid #f1f5f9', boxSizing: 'border-box' }}
         >
            <div className="flex items-center gap-2 mb-4 text-slate-700" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}><CalendarIcon size={20} className="text-sky-500" color="#0ea5e9" /><h3 className="font-bold text-lg" style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#334155' }}>Monthly Overview</h3></div>
            <div className="grid grid-cols-7 gap-1 text-center mb-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.25rem', textAlign: 'center', marginBottom: '0.5rem' }}>{['S','M','T','W','T','F','S'].map((d, i) => <div key={i} className="text-xs font-bold text-slate-300" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#cbd5e1' }}>{d}</div>)}</div>
@@ -356,6 +359,7 @@ export default function App() {
                       border: isSelected ? '2px solid #1e293b' : 'none',
                       cursor: 'pointer',
                       position: isToday ? 'relative' : 'static',
+                      boxSizing: 'border-box',
                       ...bgStyle
                     }}
                   >
