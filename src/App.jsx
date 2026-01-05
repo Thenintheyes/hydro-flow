@@ -78,7 +78,8 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
         border: '2px solid #f1f5f9', 
         borderRadius: '1.5rem',
         cursor: 'pointer',
-        minHeight: '100px' // Ensure uniform height
+        minHeight: '100px',
+        position: 'relative' // Important for internal positioning
       }}
     >
       <div className="mb-2 p-2 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors" style={{ marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#e0f2fe', borderRadius: '9999px' }}>
@@ -89,19 +90,19 @@ const QuickAddButton = ({ amount, onClick, icon: Icon, onDelete }) => (
     {onDelete && (
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(amount); }}
-        className="absolute -top-2 -right-2 bg-red-100 text-red-500 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
+        className="absolute bg-red-100 text-red-500 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
+        // FIX: Moved top/right to positive values to keep button INSIDE the card
         style={{ 
           position: 'absolute', 
-          top: '-6px', 
-          right: '-6px', 
+          top: '8px', 
+          right: '8px', 
           backgroundColor: '#fee2e2', 
           color: '#ef4444', 
           borderRadius: '9999px', 
           padding: '6px', 
-          border: '2px solid white', // Added white border to separate overlap
+          border: 'none',
           cursor: 'pointer',
-          zIndex: 10,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          zIndex: 20
         }}
       >
         <X size={14} />
@@ -288,7 +289,7 @@ export default function App() {
           )}
         </div>
 
-        {/* Controls - INCREASED GAP TO 1rem (16px) */}
+        {/* Controls - IMPROVED SPACING & POSITIONING */}
         <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="grid grid-cols-3 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {allGlasses.map((amount) => (
